@@ -14,7 +14,7 @@ import java.util.Map;
 import static io.restassured.RestAssured.baseURI;
 import static io.restassured.RestAssured.given;
 
-public class nationalitiesTest {
+public class DiscountsTest {
     Cookies cookies;
 
     @BeforeClass
@@ -41,27 +41,33 @@ public class nationalitiesTest {
         ;
     }
 
-    String nationalityID;
-    String nationalityName;
+    String discountID;
+    String discription;
+    String code;
+    String priorty;
 
 
     @Test
-    public void createNationality()
+    public void createDiscount()
     {
-        nationalityName=getRandomName();
+        discription=getRandomDiscription();
+        code=getRandomCode();
+        priorty=getRandomPriorty();
 
-        nationalitiesC nationality=new nationalitiesC();
-        nationality.setName(nationalityName); // generateCountrName
+        discountClass discount=new discountClass();
+        discount.setDescription(discription);
+        discount.setCode(code);
+        discount.setPriority(priorty);
 
 
-        nationalityID=
+        discountID=
                 given()
                         .cookies(cookies)
                         .contentType(ContentType.JSON)
-                        .body(nationality)
+                        .body(discount)
 
                         .when()
-                        .post("school-service/api/nationality")
+                        .post("school-service/api/discounts")
 
                         .then()
                         .log().body()
@@ -70,24 +76,28 @@ public class nationalitiesTest {
         ;
 
     }
-    @Test(dependsOnMethods ="createNationality")
-    public void editNationality()
+    @Test(dependsOnMethods ="createDiscount")
+    public void editDiscount()
     {
+        discription=getRandomDiscription();
+        code=getRandomCode();
+        priorty=getRandomPriorty();
 
-        nationalityName=getRandomName();
+        discountClass discount=new discountClass();
+        discount.setId(discountID);
+        discount.setDescription(discription);
+        discount.setCode(code);
+        discount.setPriority(priorty);
 
-        nationalitiesC nationality=new nationalitiesC();
-        nationality.setName(nationalityName);
-        nationality.setId(nationalityID);
 
 
                 given()
                         .cookies(cookies)
                         .contentType(ContentType.JSON)
-                        .body(nationality)
+                        .body(discount)
 
                         .when()
-                        .put("school-service/api/nationality")
+                        .put("school-service/api/discounts")
 
                         .then()
                         .log().body()
@@ -96,20 +106,18 @@ public class nationalitiesTest {
         ;
 
     }
-    @Test(dependsOnMethods ="editNationality")
-    public void deleteNationality()
+    @Test(dependsOnMethods ="editDiscount")
+    public void deleteDiscount()
     {
-
-
 
 
                 given()
                         .cookies(cookies)
                         .contentType(ContentType.JSON)
-                        .pathParam("nationalityID",nationalityID)
+                        .pathParam("discountID",discountID)
 
                         .when()
-                        .delete("school-service/api/nationality/{nationalityID}")
+                        .delete("school-service/api/discounts/{discountID}")
 
                         .then()
                         .log().body()
@@ -120,9 +128,10 @@ public class nationalitiesTest {
     }
 
 
-    public String getRandomName() {
-        return RandomStringUtils.randomAlphabetic(8).toLowerCase();
-    }
+    public String getRandomDiscription() {return RandomStringUtils.randomAlphabetic(8).toLowerCase();}
+    public String getRandomCode() {return RandomStringUtils.randomNumeric(4).toLowerCase();}
+    public String getRandomPriorty() {return RandomStringUtils.randomNumeric(3).toLowerCase();}
+
 
 
 
