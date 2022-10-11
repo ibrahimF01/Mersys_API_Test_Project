@@ -1,6 +1,6 @@
 package Campus.Model;
 
-import Campus.Rest_1;
+import Campus.SubjCategoriesTest;
 import io.restassured.http.ContentType;
 import io.restassured.http.Cookies;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -50,7 +50,7 @@ public class SubjectCategoriesClass {
         sjCateName=getRandomName();
         sjCateCode=getRandomCode();
 
-        Rest_1 sjCate=new Rest_1();
+        SubjCategoriesTest sjCate=new SubjCategoriesTest();
 
         sjCate.setName(sjCateName); //generateCountryName
         sjCate.setCode(sjCateCode);// generateCountryCode
@@ -81,7 +81,7 @@ public class SubjectCategoriesClass {
         sjCateName=getRandomName();
         sjCateCode=getRandomCode();
 
-        Rest_1 sjCate=new Rest_1();
+        SubjCategoriesTest sjCate=new SubjCategoriesTest();
         sjCate.setId(sjCateID);
 
         sjCate.setName(sjCateName); //generateCountryName
