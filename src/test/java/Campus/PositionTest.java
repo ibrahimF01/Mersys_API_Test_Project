@@ -1,11 +1,10 @@
-package Campus.Model;
+package Campus;
 
-import Campus.SubjCategoriesTest;
+import Campus.Model.PositionClass;
 import io.restassured.http.ContentType;
 import io.restassured.http.Cookies;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +12,8 @@ import java.util.Map;
 import static io.restassured.RestAssured.baseURI;
 import static io.restassured.RestAssured.given;
 
-public class SubjectCategoriesClass {
+public class PositionTest {
+
     Cookies cookies;
     @BeforeClass
     public void loginCampus(){
@@ -32,7 +32,7 @@ public class SubjectCategoriesClass {
                         .post("auth/login")
 
                         .then()
-                        //.log().all()
+                        .log().all()
                         .statusCode(200)
                         .extract().response().getDetailedCookies()
 
@@ -42,30 +42,28 @@ public class SubjectCategoriesClass {
     }
 
 
-    String sjCateID;
-    String sjCateName;
-    String sjCateCode;
+    String positionsID;
+    String positionsName;
+    String positionsShortName;
     @Test
-    public void createSjCate(){
-        sjCateName=getRandomName();
-        sjCateCode=getRandomCode();
+    public void createPositions(){
+        positionsName=getRandomName();
+        positionsShortName=getRandomShortName();
 
-        SubjCategoriesTest sjCate=new SubjCategoriesTest();
+        PositionClass position=new PositionClass();
+        position.setName(positionsName);
+        position.setShortName(positionsShortName);
 
-        sjCate.setName(sjCateName);
-        sjCate.setCode(sjCateCode);
-
-
-        sjCateID=
+        positionsID =
         given()
 
                 .cookies(cookies)
                 .contentType(ContentType.JSON)
-                .body(sjCate)
+                .body(position)
 
 
                 .when()
-                .post("school-service/api/subject-categories")
+                .post("school-service/api/employee-position")
                 .then()
                 .log().body()
                 .statusCode(201)
@@ -76,61 +74,60 @@ public class SubjectCategoriesClass {
 
 
     }
-    @Test (dependsOnMethods = "createSjCate")
-    public void updateSjCate(){
-        sjCateName=getRandomName();
-        sjCateCode=getRandomCode();
+    @Test (dependsOnMethods = "createPositions")
+    public void editPositions(){
+        positionsName=getRandomName();
+        positionsShortName=getRandomShortName();
 
-        SubjCategoriesTest sjCate=new SubjCategoriesTest();
-        sjCate.setId(sjCateID);
+        PositionClass position=new PositionClass();
+        position.setName(positionsName);
+        position.setShortName(positionsShortName);
+        position.setId(positionsID);
 
-        sjCate.setName(sjCateName);
-        sjCate.setCode(sjCateCode);
+                given()
 
-
-        given()
-
-                .cookies(cookies)
-                .contentType(ContentType.JSON)
-                .body(sjCate)
+                        .cookies(cookies)
+                        .contentType(ContentType.JSON)
+                        .body(position)
 
 
-                .when()
-                .put("school-service/api/subject-categories")
-                .then()
-                .log().body()
-                .statusCode(200)
+                        .when()
+                        .put("school-service/api/employee-position")
+                        .then()
+                        .log().body()
+                        .statusCode(200)
 
-
-        ;
-
-
-    }
-    @Test (dependsOnMethods = "updateSjCate")
-    public void deleteSjCate(){
-
-        given()
-
-                .cookies(cookies)
-                .contentType(ContentType.JSON)
-                .pathParam("sjCateID",sjCateID)
-
-
-                .when()
-                .delete("school-service/api/subject-categories/{sjCateID}")
-                .then()
-                .log().body()
-                .statusCode(200)
 
 
         ;
 
 
     }
+    @Test (dependsOnMethods = "editPositions")
+    public void deletePositions(){
+
+        given()
+
+                .cookies(cookies)
+                .contentType(ContentType.JSON)
+                .pathParam("positionsID",positionsID)
+
+
+                .when()
+                .delete("school-service/api/employee-position/{positionsID}")
+                .then()
+                .log().body()
+                .statusCode(204)
+
+        ;
+
+
+    }
+
     public  String getRandomName(){
         return RandomStringUtils.randomAlphabetic(8).toLowerCase();
     }
-    public  String getRandomCode(){
+    public  String getRandomShortName(){
         return RandomStringUtils.randomAlphabetic(3).toLowerCase();
     }
 
