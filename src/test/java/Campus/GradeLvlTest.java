@@ -1,7 +1,7 @@
 package Campus;
 
-import Campus.Model.discountClass;
-import Campus.Model.nationalitiesC;
+import Campus.Model.BankClass;
+import Campus.Model.GradeClass;
 import io.restassured.http.ContentType;
 import io.restassured.http.Cookies;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -14,7 +14,8 @@ import java.util.Map;
 import static io.restassured.RestAssured.baseURI;
 import static io.restassured.RestAssured.given;
 
-public class nationalitiesTest {
+public class GradeLvlTest {
+
     Cookies cookies;
 
     @BeforeClass
@@ -26,104 +27,137 @@ public class nationalitiesTest {
         credential.put("password", "Richfield2020!");
         credential.put("rememberMe", "true");
 
-        cookies=
+        cookies =
                 given()
                         .contentType(ContentType.JSON)
                         .body(credential)
-
                         .when()
                         .post("auth/login")
 
                         .then()
-                        //.log().cookies()
+                        .log().all()
                         .statusCode(200)
                         .extract().response().getDetailedCookies()
+
+
         ;
+
     }
 
-    String nationalityID;
-    String nationalityName;
+    String gradeID;
+
+    String Gradename;
+
+    String shortName;
 
 
     @Test
-    public void createNationality()
-    {
-        nationalityName=getRandomName();
-
-        nationalitiesC nationality=new nationalitiesC();
-        nationality.setName(nationalityName); // generateCountrName
+    public void createGrade() {
+        Gradename = getRandomName();
+        shortName = getRandomShort();
 
 
-        nationalityID=
+        GradeClass g = new GradeClass();
+        g.setName(Gradename);
+        g.setShortName(shortName);
+
+
+        gradeID =
                 given()
+
                         .cookies(cookies)
                         .contentType(ContentType.JSON)
-                        .body(nationality)
+                        .body(g)
+
 
                         .when()
-                        .post("school-service/api/nationality")
-
+                        .post("school-service/api/grade-levels")
                         .then()
                         .log().body()
                         .statusCode(201)
                         .extract().jsonPath().getString("id")
-        ;
 
-    }
-    @Test(dependsOnMethods ="createNationality")
-    public void editNationality()
-    {
-
-        nationalityName=getRandomName();
-
-        nationalitiesC nationality=new nationalitiesC();
-        nationality.setName(nationalityName);
-        nationality.setId(nationalityID);
-
-
-                given()
-                        .cookies(cookies)
-                        .contentType(ContentType.JSON)
-                        .body(nationality)
-
-                        .when()
-                        .put("school-service/api/nationality")
-
-                        .then()
-                        .log().body()
-                        .statusCode(200)
 
         ;
 
-    }
-    @Test(dependsOnMethods ="editNationality")
-    public void deleteNationality()
-    {
 
+    }
+
+    @Test(dependsOnMethods = "createGrade")
+    public void editGrade() {
+        Gradename = getRandomName();
+        shortName = getRandomShort();
+
+
+        GradeClass g = new GradeClass();
+        g.setName(Gradename);
+        g.setShortName(shortName);
+        g.setId(gradeID);
 
 
 
                 given()
+
                         .cookies(cookies)
                         .contentType(ContentType.JSON)
-                        .pathParam("nationalityID",nationalityID)
+                        .body(g)
+
 
                         .when()
-                        .delete("school-service/api/nationality/{nationalityID}")
-
+                        .put("school-service/api/grade-levels")
                         .then()
                         .log().body()
                         .statusCode(200)
 
+
+
+        ;
+
+
+    }
+
+
+     @Test(dependsOnMethods = "editGrade")
+    public void deleteGrade() {
+
+
+
+
+                given()
+
+                        .cookies(cookies)
+                        .contentType(ContentType.JSON)
+                        .pathParam("gradeID",gradeID)
+
+
+
+                        .when()
+                        .delete("school-service/api/grade-levels/{gradeID}")
+                        .then()
+                        .log().body()
+                        .statusCode(200)
+
+
+
         ;
 
     }
+
+
+
+
+
+
+
+
 
 
     public String getRandomName() {
         return RandomStringUtils.randomAlphabetic(8).toLowerCase();
     }
 
-
+    public String getRandomShort() {
+        return RandomStringUtils.randomAlphabetic(3).toLowerCase();
+    }
 
 }
