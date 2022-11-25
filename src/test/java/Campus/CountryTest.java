@@ -52,7 +52,7 @@ public class CountryTest {
         country.setName(countryName); //generateCountryName
         country.setCode(countryCode);// generateCountryCode
 
-
+        countryID=
         given()
 
                 .cookies(cookies)
